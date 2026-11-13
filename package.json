@@ -1,0 +1,10 @@
+{
+  "name": "picket",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Tell it how long a fence you want and it gives you the panels, posts, postmix, gravel boards and caps to buy, and how long the posts need to be. Runs in the browser, nothing uploaded. With Perry the post.",
+  "scripts": {
+    "test": "node --test"
+  },
+  "license": "MIT"
+}
