@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Picket — what to buy for a fence</title>
+<meta name="description" content="Tell it how long a fence you want and it works out the panels, posts, postmix, gravel boards and caps to buy, and how long the posts need to be. Runs in your browser, nothing uploaded.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%236a8f4e'/><rect x='14' y='18' width='8' height='34' rx='2' fill='%23e9dcc3'/><rect x='28' y='18' width='8' height='34' rx='2' fill='%23e9dcc3'/><rect x='42' y='18' width='8' height='34' rx='2' fill='%23e9dcc3'/><rect x='10' y='26' width='44' height='5' fill='%23c9b79a'/><rect x='10' y='40' width='44' height='5' fill='%23c9b79a'/></svg>">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="wrap">
+  <header class="intro">
+    <h1>Picket</h1>
+    <p class="lede">Say how long a fence you want and it gives you the panels, posts, postmix, gravel boards and caps to buy, and how long the posts need to be.</p>
+  </header>
+
+  <section class="panel" aria-label="Your fence">
+    <div class="grid">
+      <label class="field field--wide">Length of fence
+        <span class="with-unit"><input type="number" id="run" min="0" step="0.1" inputmode="decimal" placeholder="e.g. 10"><span class="unit">m</span></span>
+      </label>
+
+      <label class="field">Panel width
+        <select id="panel"></select>
+      </label>
+
+      <label class="field">Fence height
+        <select id="height"></select>
+      </label>
+
+      <label class="field">Ground
+        <select id="ground">
+          <option value="firm">Firm (clay, loam)</option>
+          <option value="soft">Soft or sandy</option>
+        </select>
+      </label>
+
+      <label class="field">Post width
+        <select id="post">
+          <option value="100">100 mm (4 in)</option>
+          <option value="75">75 mm (3 in)</option>
+          <option value="125">125 mm (5 in)</option>
+        </select>
+      </label>
+
+      <label class="field">Extra posts
+        <input type="number" id="extra" min="0" step="1" value="0" inputmode="numeric">
+        <span class="hint">for corners, gates and ends against a wall</span>
+      </label>
+    </div>
+
+    <div class="checks">
+      <label class="check"><input type="checkbox" id="heavy"> Heavy-duty or tall posts</label>
+      <label class="check"><input type="checkbox" id="gravel" checked> Add gravel boards</label>
+      <label class="check"><input type="checkbox" id="caps" checked> Add post caps</label>
+    </div>
+
+    <div class="actions">
+      <button type="button" id="share" class="btn">Share link</button>
+      <button type="button" id="clear" class="btn btn--quiet">Clear</button>
+    </div>
+  </section>
+
+  <section id="out" class="out" aria-live="polite" aria-label="What to buy"></section>
+
+  <section class="notes">
+    <h2>How it works</h2>
+    <p>Fence panels sit in bays between posts, so the number of <strong>panels</strong> is your run divided by one panel's width, rounded up, and you need <strong>one more post than panels</strong> because there's a post at each end as well as between every panel. Corners, gates and a run that ends against a wall each add a post, so there's a box for extras.</p>
+    <p>A post is set about a third of its height into the ground, roughly 600 mm for a full-height fence, so a 1.83 m (6 ft) fence wants a 2.4 m post. <strong>Postmix</strong> — the rapid-set bagged concrete you pour in dry and wet down — is usually 1 to 2 bags a post in firm ground and 2 to 3 in soft, a bit more for a tall or heavy-duty post, so the count is shown as a range.</p>
+    <p>Panel widths vary by make: a 6 ft panel is 1.83 m but European panels are 1.80 m, and over a long boundary the difference adds up, so check the panel before you buy the posts. The method and figures follow <a href="https://www.jacksons-fencing.co.uk/fence-builder" rel="noopener">Jacksons Fencing</a>'s fence builder and <a href="https://www.wern-wood.com/blogs/timber/how-many-fence-panels-posts-bags-of-postmix-do-i-need" rel="noopener">Wern-Wood</a>'s panels, posts and postmix guide.</p>
+    <p class="fineprint">Picket is a shopping-list guide, not a structural design. Deeper posts, concrete spurs or a wind-rated fence may be needed on an exposed or high boundary, and a boundary fence can have rules about height and ownership. Check with your supplier or a fencer if you're unsure.</p>
+  </section>
+</main>
+
+<button id="perry" class="perry" aria-label="Perry the post — tap for a tip">
+  <svg viewBox="0 0 64 64" width="56" height="56" aria-hidden="true">
+    <rect x="18" y="10" width="28" height="48" rx="5" fill="#e9dcc3"/>
+    <path d="M 18 14 L 32 6 L 46 14 Z" fill="#c9b79a"/>
+    <rect x="14" y="30" width="36" height="6" rx="2" fill="#c9b79a"/>
+    <circle cx="27" cy="26" r="3" fill="#44403a"/>
+    <circle cx="37" cy="26" r="3" fill="#44403a"/>
+    <path id="perry-mouth" d="M 22 40 Q 32 47 42 40" fill="none" stroke="#44403a" stroke-width="3" stroke-linecap="round"/>
+  </svg>
+</button>
+<div id="perry-bubble" class="perry-bubble" role="status" aria-live="polite"></div>
+
+<script src="src/core.js"></script>
+<script src="src/perry.js"></script>
+<script src="src/app.js"></script>
+</body>
+</html>
