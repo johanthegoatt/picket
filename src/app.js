@@ -7,7 +7,7 @@
   var $ = function (id) { return document.getElementById(id); };
 
   var runEl = $("run"), panelEl = $("panel"), heightEl = $("height");
-  var groundEl = $("ground"), postEl = $("post"), extraEl = $("extra");
+  var groundEl = $("ground"), postEl = $("post"), extraEl = $("extra"), trellisEl = $("trellis");
   var heavyEl = $("heavy"), gravelEl = $("gravel"), capsEl = $("caps");
   var out = $("out");
 
@@ -33,7 +33,8 @@
       heavyDuty: heavyEl.checked,
       gravelBoards: gravelEl.checked,
       postCaps: capsEl.checked,
-      extraPosts: parseInt(extraEl.value, 10) || 0
+      extraPosts: parseInt(extraEl.value, 10) || 0,
+      trellisHeight: parseFloat(trellisEl.value) || 0
     };
   }
 
@@ -64,6 +65,7 @@
     items += row(r.posts, r.posts === 1 ? "post" : "posts",
       r.postLength.toFixed(1) + " m long, set about " + Math.round(r.holeDepth * 1000) + " mm into the ground");
     items += row(bagLine(r), "postmix", r.bagsPerPostLow + "–" + r.bagsPerPostHigh + " x " + r.bagKg + " kg per post, " + r.ground + " ground");
+    if (r.trellisPanels) items += row(r.trellisPanels, r.trellisPanels === 1 ? "trellis topper" : "trellis toppers", Math.round(r.trellisHeight * 1000) + " mm, one per bay, sat on top of the panels");
     if (r.gravelBoards) items += row(r.gravelBoards, r.gravelBoards === 1 ? "gravel board" : "gravel boards", "one per bay, keeps the panels off wet ground");
     if (r.caps) items += row(r.caps, r.caps === 1 ? "post cap" : "post caps", "sheds rain off the post tops");
 
@@ -93,6 +95,7 @@
     if (!o.gravelBoards) q.set("gb", "0");
     if (!o.postCaps) q.set("cap", "0");
     if (o.extraPosts) q.set("x", o.extraPosts);
+    if (o.trellisHeight) q.set("tr", o.trellisHeight);
     return q.toString();
   }
 
@@ -108,6 +111,7 @@
     if (q.get("gb") === "0") gravelEl.checked = false;
     if (q.get("cap") === "0") capsEl.checked = false;
     if (q.has("x")) extraEl.value = q.get("x");
+    if (q.has("tr")) trellisEl.value = q.get("tr");
   }
 
   $("share").addEventListener("click", function () {
@@ -125,12 +129,12 @@
     runEl.value = ""; extraEl.value = "0";
     heavyEl.checked = false; gravelEl.checked = true; capsEl.checked = true;
     panelEl.selectedIndex = 0; heightEl.selectedIndex = 0;
-    groundEl.value = "firm"; postEl.value = "100";
+    groundEl.value = "firm"; postEl.value = "100"; trellisEl.value = "0";
     history.replaceState(null, "", location.pathname);
     render();
   });
 
-  [runEl, panelEl, heightEl, groundEl, postEl, extraEl, heavyEl, gravelEl, capsEl].forEach(function (el) {
+  [runEl, panelEl, heightEl, groundEl, postEl, extraEl, trellisEl, heavyEl, gravelEl, capsEl].forEach(function (el) {
     el.addEventListener("input", render);
     el.addEventListener("change", render);
   });
