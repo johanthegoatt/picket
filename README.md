@@ -23,6 +23,9 @@ sign in to.
   or heavy-duty post, so it's shown as a range.
 - **Gravel boards** — one per bay, to keep the panels off wet ground.
 - **Caps** — one per post, to shed rain off the tops.
+- **Trellis topper** — add a 300/450/600 mm trellis on top and Picket buys taller
+  posts (the post has to clear the fence, the trellis and the buried depth) and
+  adds one trellis panel per bay to the list.
 
 Panel widths vary by make: a 6 ft panel is 1.83 m but European panels are
 1.80 m, and over a long boundary the difference adds up, so set the width to
