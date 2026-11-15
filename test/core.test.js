@@ -100,3 +100,29 @@ test("always warns that panel widths vary", function () {
   var r = Picket.estimate({ runLength: 10 });
   assert.ok(r.notes.some(function (n) { return /Panel widths vary/.test(n); }));
 });
+
+test("a trellis topper makes the posts taller", () => {
+  var plain = Picket.estimate({ runLength: 10, fenceHeight: 1.83 });
+  var topped = Picket.estimate({ runLength: 10, fenceHeight: 1.83, trellisHeight: 0.3 });
+  assert.ok(topped.neededPostLength > plain.neededPostLength);
+  assert.ok(topped.postLength >= plain.postLength);
+  assert.strictEqual(topped.trellisHeight, 0.3);
+});
+
+test("a trellis topper adds one trellis panel per bay", () => {
+  var r = Picket.estimate({ runLength: 10, fenceHeight: 1.83, trellisHeight: 0.45 });
+  assert.strictEqual(r.trellisPanels, r.panels);
+  assert.ok(r.trellisPanels > 0);
+});
+
+test("no trellis means no trellis panels", () => {
+  var r = Picket.estimate({ runLength: 10, fenceHeight: 1.83 });
+  assert.strictEqual(r.trellisPanels, 0);
+  assert.strictEqual(r.trellisHeight, 0);
+});
+
+test("needed post length is fence plus trellis plus burial", () => {
+  var r = Picket.estimate({ runLength: 6, fenceHeight: 1.5, trellisHeight: 0.6 });
+  // burial for 1.5 m fence is max(0.6, 0.5) = 0.6; 1.5 + 0.6 + 0.6 = 2.7
+  assert.strictEqual(r.neededPostLength, 2.7);
+});
