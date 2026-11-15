@@ -97,6 +97,9 @@
     var wantGravelBoards = opts.gravelBoards !== false;
     var wantCaps = opts.postCaps !== false;
     var extraPosts = Math.max(0, Math.floor(Number(opts.extraPosts) || 0));
+    // A trellis topper adds height above the panels. It needs taller posts (the
+    // trellis height on top of the fence) and one trellis panel per bay.
+    var trellisHeight = Math.max(0, Number(opts.trellisHeight) || 0);
 
     // Panels: how many full panel widths cover the run, rounded up. Posts: one
     // at each end plus one between every pair of panels, which is panels + 1,
@@ -127,9 +130,12 @@
     // height and round up to a post you can buy off the shelf.
     var burial = Math.max(0.6, round(height / 3, 2));
     if (height <= 1.2) burial = Math.max(0.45, round(height / 3, 2));
-    var neededPostLength = round(height + burial, 2);
+    // A trellis topper stands above the panels, so the post has to clear the
+    // fence height, the trellis and the buried depth.
+    var neededPostLength = round(height + trellisHeight + burial, 2);
     var postLength = standardPostLength(neededPostLength);
     var holeDepth = burial; // the depth to dig; any extra post length is trimmed
+    var trellisPanels = trellisHeight > 0 ? panels : 0; // one per bay
 
     var per = bagsPerPost(ground, heavyDuty);
     var bagsLow = posts * per.low;
@@ -147,6 +153,12 @@
     if (height >= 1.8) {
       notes.push("At this height the posts take more wind, so set them in the deeper hole and use the higher bag count, especially on an exposed boundary.");
     }
+    if (trellisHeight > 0) {
+      notes.push("The " + Math.round(trellisHeight * 1000) + " mm trellis topper means taller posts: a " +
+        postLength.toFixed(1) + " m post clears the " + height.toFixed(2) + " m fence, the trellis and the buried depth. That's " +
+        trellisPanels + " trellis panel" + (trellisPanels === 1 ? "" : "s") + ", one per bay, on top.");
+    }
+
     notes.push("Postmix is a guide: the real amount depends on the hole and post size. A 100 mm post wants about a 300 mm wide, " + Math.round(holeDepth * 1000) + " mm deep hole.");
 
     return {
@@ -172,6 +184,8 @@
       bagKg: BAG_KG,
       gravelBoards: gravelBoards,
       caps: caps,
+      trellisHeight: trellisHeight,
+      trellisPanels: trellisPanels,
       notes: notes
     };
   }
