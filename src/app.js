@@ -65,6 +65,7 @@
     items += row(r.posts, r.posts === 1 ? "post" : "posts",
       r.postLength.toFixed(1) + " m long, set about " + Math.round(r.holeDepth * 1000) + " mm into the ground");
     items += row(bagLine(r), "postmix", r.bagsPerPostLow + "–" + r.bagsPerPostHigh + " x " + r.bagKg + " kg per post, " + r.ground + " ground");
+    if (r.postHole && r.posts > 0) items += row(r.postHole.totalM3 + " m³", "or mixed concrete", r.postHole.sideMm + " mm square x " + r.postHole.depthMm + " mm holes, cheaper to mix or order ready-mix on a long run");
     if (r.trellisPanels) items += row(r.trellisPanels, r.trellisPanels === 1 ? "trellis topper" : "trellis toppers", Math.round(r.trellisHeight * 1000) + " mm, one per bay, sat on top of the panels");
     if (r.gravelBoards) items += row(r.gravelBoards, r.gravelBoards === 1 ? "gravel board" : "gravel boards", "one per bay, keeps the panels off wet ground");
     if (r.caps) items += row(r.caps, r.caps === 1 ? "post cap" : "post caps", "sheds rain off the post tops");
