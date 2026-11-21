@@ -141,6 +141,25 @@
     var bagsLow = posts * per.low;
     var bagsHigh = posts * per.high;
 
+    // Post holes as a concrete volume, for a long run where you'd mix your own
+    // or order ready-mix rather than count postmix bags. The trade digs a hole
+    // about three times the post width (a 100 mm post gets a ~300 mm hole) to
+    // the buried depth. The concrete that goes in is the hole less the post
+    // itself. A heavy-duty or tall post wants a wider hole, so it bumps the
+    // multiplier up. This is the same job as the bag range, costed by volume.
+    var holeMult = heavyDuty ? 3.5 : 3;
+    var holeSideM = (postWidth / 1000) * holeMult;      // square hole side, m
+    var postSideM = postWidth / 1000;
+    var concretePerHole = (holeSideM * holeSideM - postSideM * postSideM) * holeDepth;
+    var totalConcrete = concretePerHole * posts;
+    var postHole = {
+      sideMm: Math.round(holeSideM * 1000),
+      depthMm: Math.round(holeDepth * 1000),
+      perHoleM3: round(concretePerHole, 3),
+      totalM3: round(totalConcrete, 2),
+      totalLitres: Math.round(totalConcrete * 1000)
+    };
+
     var gravelBoards = wantGravelBoards ? panels : 0; // one per bay
     var caps = wantCaps ? posts : 0;
 
@@ -159,7 +178,9 @@
         trellisPanels + " trellis panel" + (trellisPanels === 1 ? "" : "s") + ", one per bay, on top.");
     }
 
-    notes.push("Postmix is a guide: the real amount depends on the hole and post size. A 100 mm post wants about a 300 mm wide, " + Math.round(holeDepth * 1000) + " mm deep hole.");
+    notes.push("Postmix is a guide: the real amount depends on the hole and post size. Here each hole is about " +
+      postHole.sideMm + " mm square and " + postHole.depthMm + " mm deep, so all " + posts + " posts take roughly " +
+      postHole.totalM3 + " m³ (" + postHole.totalLitres + " litres) of concrete if you mix your own or order ready-mix instead of bags.");
 
     return {
       run: run,
@@ -182,6 +203,7 @@
       bagsLow: bagsLow,
       bagsHigh: bagsHigh,
       bagKg: BAG_KG,
+      postHole: postHole,
       gravelBoards: gravelBoards,
       caps: caps,
       trellisHeight: trellisHeight,
