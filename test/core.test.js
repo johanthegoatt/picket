@@ -126,3 +126,23 @@ test("needed post length is fence plus trellis plus burial", () => {
   // burial for 1.5 m fence is max(0.6, 0.5) = 0.6; 1.5 + 0.6 + 0.6 = 2.7
   assert.strictEqual(r.neededPostLength, 2.7);
 });
+
+test("post holes give a concrete volume as an alternative to bags", () => {
+  // 20 m run, 1.83 m panels -> 11 panels, 12 posts. 100 mm posts, ~300 mm holes.
+  const r = Picket.estimate({ runLength: 20, fenceHeight: 1.83, postWidth: 100 });
+  assert.strictEqual(r.posts, 12);
+  assert.strictEqual(r.postHole.sideMm, 300);          // 3 x 100 mm
+  assert.strictEqual(r.postHole.depthMm, Math.round(r.holeDepth * 1000));
+  // per hole = (0.3^2 - 0.1^2) * depth = 0.08 * depth
+  const expectPer = (0.3 * 0.3 - 0.1 * 0.1) * r.holeDepth;
+  assert.ok(Math.abs(r.postHole.perHoleM3 - Math.round(expectPer * 1000) / 1000) < 1e-9);
+  assert.ok(r.postHole.totalM3 > 0);
+  assert.ok(r.notes.some((n) => /mix your own or order ready-mix/.test(n)));
+});
+
+test("a heavy-duty post digs a wider hole and needs more concrete", () => {
+  const std = Picket.estimate({ runLength: 20, fenceHeight: 1.83, postWidth: 100 });
+  const hd = Picket.estimate({ runLength: 20, fenceHeight: 1.83, postWidth: 100, heavyDuty: true });
+  assert.ok(hd.postHole.sideMm > std.postHole.sideMm, "wider hole");
+  assert.ok(hd.postHole.totalM3 > std.postHole.totalM3, "more concrete");
+});
