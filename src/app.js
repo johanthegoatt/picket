@@ -9,6 +9,7 @@
   var runEl = $("run"), panelEl = $("panel"), heightEl = $("height");
   var groundEl = $("ground"), postEl = $("post"), extraEl = $("extra"), trellisEl = $("trellis");
   var heavyEl = $("heavy"), gravelEl = $("gravel"), capsEl = $("caps");
+  var fallEl = $("fall");
   var out = $("out");
 
   function fillSelect(el, presets, valueKey) {
@@ -34,7 +35,8 @@
       gravelBoards: gravelEl.checked,
       postCaps: capsEl.checked,
       extraPosts: parseInt(extraEl.value, 10) || 0,
-      trellisHeight: parseFloat(trellisEl.value) || 0
+      trellisHeight: parseFloat(trellisEl.value) || 0,
+      fall: parseFloat(fallEl.value) || 0
     };
   }
 
@@ -135,7 +137,7 @@
     render();
   });
 
-  [runEl, panelEl, heightEl, groundEl, postEl, extraEl, trellisEl, heavyEl, gravelEl, capsEl].forEach(function (el) {
+  [runEl, panelEl, heightEl, groundEl, postEl, extraEl, trellisEl, fallEl, heavyEl, gravelEl, capsEl].forEach(function (el) {
     el.addEventListener("input", render);
     el.addEventListener("change", render);
   });
