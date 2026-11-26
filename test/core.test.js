@@ -146,3 +146,38 @@ test("a heavy-duty post digs a wider hole and needs more concrete", () => {
   assert.ok(hd.postHole.sideMm > std.postHole.sideMm, "wider hole");
   assert.ok(hd.postHole.totalM3 > std.postHole.totalM3, "more concrete");
 });
+
+test("slopePlan: the step per bay shares the fall over the panels", function () {
+  var s = Picket.slopePlan({ fall: 0.6, panels: 4, runLength: 7.2 });
+  assert.strictEqual(s.stepMm, 150);   // 600 mm / 4
+  assert.strictEqual(s.gapMm, 150);    // gap under each stepped panel = step
+  assert.strictEqual(s.needsDeeperBoard, false); // just at the 150 mm board
+  assert.ok(s.gradientPct > 0);
+});
+
+test("slopePlan: a steep step needs a deeper board or stacking", function () {
+  var s = Picket.slopePlan({ fall: 1.2, panels: 4 }); // 300 mm step
+  assert.strictEqual(s.stepMm, 300);
+  assert.strictEqual(s.needsDeeperBoard, true);
+  assert.strictEqual(s.boardsPerBay, 2); // 300 over a 150 mm board
+});
+
+test("slopePlan: more bays make a gentler step", function () {
+  var few = Picket.slopePlan({ fall: 0.8, panels: 2 });
+  var many = Picket.slopePlan({ fall: 0.8, panels: 8 });
+  assert.ok(many.stepMm < few.stepMm);
+});
+
+test("slopePlan returns null with no fall or no panels", function () {
+  assert.strictEqual(Picket.slopePlan({ panels: 4 }), null);
+  assert.strictEqual(Picket.slopePlan({ fall: 0.6 }), null);
+  assert.strictEqual(Picket.slopePlan({}), null);
+});
+
+test("estimate carries a slope plan only when a fall is given", function () {
+  var flat = Picket.estimate({ runLength: 10, fenceHeight: 1.8 });
+  assert.strictEqual(flat.slope, null);
+  var sloped = Picket.estimate({ runLength: 10, fenceHeight: 1.8, fall: 0.5 });
+  assert.ok(sloped.slope);
+  assert.strictEqual(sloped.slope.panels, sloped.panels);
+});
