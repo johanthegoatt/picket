@@ -83,6 +83,39 @@
   // width, post width, fence height, ground firmness, whether the posts are
   // heavy-duty, whether you want gravel boards and caps, and any extra posts
   // for corners, gates or ends against a wall.
+  // Ground that falls across the run. A panel fence can't bend, so on a slope
+  // the bays are "stepped": each rigid panel is hung level but a step lower than
+  // the one uphill of it, which leaves a triangular gap under the downhill end
+  // of every panel. That gap is what the gravel board fills. The step per bay is
+  // the total fall shared over the bays, and the gap at the downhill end of a
+  // panel is that same step. If the step is more than a standard gravel board is
+  // tall (about 150 mm), one board won't cover it, so you need a deeper board,
+  // two boards, or to rake (angle) the panels to the slope instead.
+  var GRAVEL_BOARD_MM = 150;   // a standard concrete/timber gravel board height
+  function slopePlan(opts) {
+    opts = opts || {};
+    var fall = Number(opts.fall);          // total drop across the run, metres
+    var panels = Math.floor(Number(opts.panels) || 0);
+    if (!(fall > 0) || !(panels > 0)) return null;
+    var boardMm = Number(opts.gravelBoardMm) > 0 ? Number(opts.gravelBoardMm) : GRAVEL_BOARD_MM;
+
+    var stepM = fall / panels;
+    var stepMm = Math.round(stepM * 1000);
+    var run = Number(opts.runLength) > 0 ? Number(opts.runLength) : null;
+    var gradientPct = run ? Math.round((fall / run) * 1000) / 10 : null;
+
+    return {
+      fall: Math.round(fall * 1000) / 1000,
+      panels: panels,
+      stepMm: stepMm,
+      gapMm: stepMm,              // the triangular gap under each stepped panel
+      gravelBoardMm: boardMm,
+      needsDeeperBoard: stepMm > boardMm,
+      boardsPerBay: Math.max(1, Math.ceil(stepMm / boardMm)),
+      gradientPct: gradientPct
+    };
+  }
+
   function estimate(opts) {
     opts = opts || {};
     var run = Number(opts.runLength);
@@ -178,6 +211,17 @@
         trellisPanels + " trellis panel" + (trellisPanels === 1 ? "" : "s") + ", one per bay, on top.");
     }
 
+    var slope = slopePlan({ fall: opts.fall, panels: panels, runLength: run, gravelBoardMm: opts.gravelBoardMm });
+    if (slope) {
+      notes.push("The ground falls " + (slope.fall).toFixed(2) + " m across the run" +
+        (slope.gradientPct != null ? " (about " + slope.gradientPct + "%)" : "") +
+        ", so step the panels: each bay drops " + slope.stepMm + " mm, leaving a " + slope.gapMm +
+        " mm gap under the downhill end of every panel for the gravel board to fill. " +
+        (slope.needsDeeperBoard
+          ? "That step is more than a standard " + slope.gravelBoardMm + " mm board, so use a deeper board, " + slope.boardsPerBay + " boards stacked, or rake the panels to the slope."
+          : "A standard " + slope.gravelBoardMm + " mm gravel board covers it."));
+    }
+
     notes.push("Postmix is a guide: the real amount depends on the hole and post size. Here each hole is about " +
       postHole.sideMm + " mm square and " + postHole.depthMm + " mm deep, so all " + posts + " posts take roughly " +
       postHole.totalM3 + " m³ (" + postHole.totalLitres + " litres) of concrete if you mix your own or order ready-mix instead of bags.");
@@ -208,6 +252,7 @@
       caps: caps,
       trellisHeight: trellisHeight,
       trellisPanels: trellisPanels,
+      slope: slope,
       notes: notes
     };
   }
@@ -223,6 +268,8 @@
     round: round,
     standardPostLength: standardPostLength,
     bagsPerPost: bagsPerPost,
+    slopePlan: slopePlan,
+    GRAVEL_BOARD_MM: GRAVEL_BOARD_MM,
     estimate: estimate
   };
 });
